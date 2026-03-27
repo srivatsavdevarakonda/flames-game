@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>FLAMES Game — README</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --bg:#0d0d14;
+  --surface:#13131f;
+  --surface2:#1a1a2e;
+  --border:#2a2a45;
+  --accent:#ff4d8d;
+  --accent2:#7c3aed;
+  --accent3:#0ea5e9;
+  --green:#22c55e;
+  --amber:#f59e0b;
+  --text:#f0eeff;
+  --muted:#8880aa;
+  --code-bg:#0a0a14;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{
+  font-family:'Nunito',sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  min-height:100vh;
+  overflow-x:hidden;
+}
+
+/* ── STARFIELD ── */
+#stars{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden;}
+.star{
+  position:absolute;border-radius:50%;
+  background:#fff;animation:twinkle linear infinite;
+}
+@keyframes twinkle{
+  0%,100%{opacity:0.1;transform:scale(1);}
+  50%{opacity:0.8;transform:scale(1.3);}
+}
+
+/* ── GLOW ORBS ── */
+.orb{
+  position:fixed;border-radius:50%;filter:blur(80px);
+  pointer-events:none;z-index:0;opacity:0.12;
+  animation:orbFloat 8s ease-in-out infinite;
+}
+.orb1{width:400px;height:400px;background:var(--accent);top:-100px;left:-100px;animation-delay:0s;}
+.orb2{width:300px;height:300px;background:var(--accent2);bottom:-80px;right:-80px;animation-delay:-4s;}
+.orb3{width:250px;height:250px;background:var(--accent3);top:40%;left:60%;animation-delay:-2s;}
+@keyframes orbFloat{
+  0%,100%{transform:translate(0,0);}
+  33%{transform:translate(30px,-20px);}
+  66%{transform:translate(-20px,30px);}
+}
+
+/* ── LAYOUT ── */
+.wrap{position:relative;z-index:1;max-width:860px;margin:0 auto;padding:0 1.5rem 6rem;}
+
+/* ── HERO ── */
+.hero{
+  text-align:center;padding:5rem 0 3rem;
+  animation:heroIn 1s cubic-bezier(0.22,1,0.36,1) both;
+}
+@keyframes heroIn{from{opacity:0;transform:translateY(-40px);}to{opacity:1;transform:translateY(0);}}
+.hero-badge{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:6px 16px;border-radius:999px;
+  border:1px solid var(--border);background:var(--surface2);
+  font-size:12px;font-weight:700;color:var(--muted);
+  letter-spacing:0.1em;text-transform:uppercase;margin-bottom:1.5rem;
+  animation:badgePop 0.6s 0.3s cubic-bezier(0.34,1.56,0.64,1) both;
+}
+@keyframes badgePop{from{opacity:0;transform:scale(0.7);}to{opacity:1;transform:scale(1);}}
+.hero-badge span{width:6px;height:6px;border-radius:50%;background:var(--green);display:inline-block;animation:blink 1.5s ease infinite;}
+@keyframes blink{0%,100%{opacity:1;}50%{opacity:0.2;}}
+
+.hero-title{
+  font-family:'Fredoka One',cursive;
+  font-size:clamp(64px,12vw,110px);
+  letter-spacing:0.12em;
+  background:linear-gradient(135deg,var(--accent) 0%,var(--accent2) 50%,var(--accent3) 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  line-height:1;margin-bottom:0.5rem;
+  filter:drop-shadow(0 0 40px rgba(255,77,141,0.3));
+  animation:titleShimmer 4s linear infinite;
+  background-size:200%;
+}
+@keyframes titleShimmer{
+  0%{background-position:0%;}
+  100%{background-position:200%;}
+}
+.hero-sub{
+  font-size:18px;color:var(--muted);font-weight:700;margin-bottom:2rem;
+}
+.hero-badges{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-bottom:2.5rem;}
+.badge{
+  padding:5px 12px;border-radius:999px;font-size:12px;font-weight:800;
+  letter-spacing:0.06em;border:1px solid;
+}
+.badge-pink{background:rgba(255,77,141,0.12);color:var(--accent);border-color:rgba(255,77,141,0.3);}
+.badge-purple{background:rgba(124,58,237,0.12);color:#a78bfa;border-color:rgba(124,58,237,0.3);}
+.badge-blue{background:rgba(14,165,233,0.12);color:var(--accent3);border-color:rgba(14,165,233,0.3);}
+.badge-green{background:rgba(34,197,94,0.12);color:var(--green);border-color:rgba(34,197,94,0.3);}
+.badge-amber{background:rgba(245,158,11,0.12);color:var(--amber);border-color:rgba(245,158,11,0.3);}
+
+/* ── SECTION ── */
+.section{
+  margin-bottom:2.5rem;
+  opacity:0;transform:translateY(30px);
+  transition:opacity 0.6s ease,transform 0.6s ease;
+}
+.section.visible{opacity:1;transform:translateY(0);}
+
+.section-label{
+  font-size:11px;font-weight:900;letter-spacing:0.14em;
+  text-transform:uppercase;color:var(--accent);margin-bottom:0.75rem;
+  display:flex;align-items:center;gap:8px;
+}
+.section-label::after{content:'';flex:1;height:1px;background:var(--border);}
+
+.section-title{
+  font-family:'Fredoka One',cursive;font-size:28px;
+  color:var(--text);margin-bottom:1rem;
+}
+
+/* ── CARDS ── */
+.card{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:16px;padding:1.5rem;margin-bottom:1rem;
+  transition:border-color 0.2s,box-shadow 0.2s,transform 0.2s;
+}
+.card:hover{border-color:rgba(255,77,141,0.3);box-shadow:0 8px 32px rgba(255,77,141,0.08);transform:translateY(-2px);}
+
+/* ── GROQ GUIDE ── */
+.steps-list{counter-reset:steps;list-style:none;}
+.steps-list li{
+  counter-increment:steps;
+  display:flex;gap:16px;align-items:flex-start;
+  padding:1.25rem;border-radius:14px;
+  background:var(--surface2);border:1px solid var(--border);
+  margin-bottom:10px;transition:all 0.2s;
+}
+.steps-list li:hover{border-color:rgba(255,77,141,0.3);transform:translateX(4px);}
+.step-num{
+  min-width:36px;height:36px;border-radius:50%;
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Fredoka One',cursive;font-size:16px;color:#fff;flex-shrink:0;
+}
+.step-content{flex:1;}
+.step-title{font-weight:800;font-size:15px;color:var(--text);margin-bottom:4px;}
+.step-desc{font-size:13px;color:var(--muted);line-height:1.6;}
+.step-url{
+  display:inline-flex;align-items:center;gap:6px;margin-top:8px;
+  padding:5px 12px;border-radius:8px;
+  background:rgba(255,77,141,0.1);border:1px solid rgba(255,77,141,0.25);
+  color:var(--accent);font-size:12px;font-weight:700;text-decoration:none;
+  transition:background 0.2s;
+}
+.step-url:hover{background:rgba(255,77,141,0.2);}
+
+/* FREE BANNER */
+.free-banner{
+  background:linear-gradient(135deg,rgba(34,197,94,0.1),rgba(34,197,94,0.05));
+  border:1px solid rgba(34,197,94,0.3);border-radius:16px;
+  padding:1.25rem 1.5rem;display:flex;align-items:center;gap:16px;margin-bottom:1.5rem;
+  animation:glowGreen 3s ease-in-out infinite;
+}
+@keyframes glowGreen{
+  0%,100%{box-shadow:0 0 0 0 rgba(34,197,94,0);}
+  50%{box-shadow:0 0 20px rgba(34,197,94,0.15);}
+}
+.free-banner-icon{font-size:36px;}
+.free-banner-text strong{font-size:18px;color:var(--green);display:block;font-weight:900;}
+.free-banner-text span{font-size:13px;color:var(--muted);}
+
+/* LIMITS TABLE */
+.limits-table{width:100%;border-collapse:separate;border-spacing:0;font-size:13px;}
+.limits-table th{
+  padding:10px 14px;background:var(--surface2);color:var(--muted);
+  font-weight:900;letter-spacing:0.06em;text-transform:uppercase;font-size:11px;
+  text-align:left;
+}
+.limits-table th:first-child{border-radius:10px 0 0 10px;}
+.limits-table th:last-child{border-radius:0 10px 10px 0;}
+.limits-table td{padding:10px 14px;border-bottom:1px solid var(--border);color:var(--text);font-weight:600;}
+.limits-table tr:last-child td{border-bottom:none;}
+.chip{
+  display:inline-block;padding:2px 10px;border-radius:999px;
+  font-size:11px;font-weight:800;
+}
+.chip-green{background:rgba(34,197,94,0.15);color:var(--green);}
+.chip-amber{background:rgba(245,158,11,0.15);color:var(--amber);}
+
+/* ── CODE BLOCKS ── */
+.code-block{
+  background:var(--code-bg);border:1px solid var(--border);
+  border-radius:12px;overflow:hidden;margin:0.75rem 0;
+}
+.code-header{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:8px 14px;border-bottom:1px solid var(--border);
+  background:var(--surface2);
+}
+.code-lang{font-size:11px;font-weight:700;color:var(--muted);letter-spacing:0.08em;text-transform:uppercase;}
+.code-dots{display:flex;gap:6px;}
+.code-dots span{width:10px;height:10px;border-radius:50%;}
+.dot-r{background:#ff5f57;}.dot-y{background:#febc2e;}.dot-g{background:#28c840;}
+.code-body{padding:1rem 1.25rem;overflow-x:auto;}
+.code-body pre{font-family:'JetBrains Mono',monospace;font-size:13px;line-height:1.7;color:#c9c0f0;}
+.kw{color:#ff79c6;}.str{color:#f1fa8c;}.cm{color:#6272a4;font-style:italic;}
+.fn{color:#50fa7b;}.var{color:#8be9fd;}.num{color:#bd93f9;}
+
+/* ── DIR TREE ── */
+.tree{
+  font-family:'JetBrains Mono',monospace;font-size:13px;
+  background:var(--code-bg);border:1px solid var(--border);border-radius:12px;
+  padding:1.25rem;line-height:2;
+}
+.tree-folder{color:#ffd700;font-weight:600;}
+.tree-file{color:#c9c0f0;}
+.tree-comment{color:#6272a4;font-style:italic;}
+.tree-owner{
+  display:inline-block;padding:1px 8px;border-radius:4px;
+  font-size:10px;font-weight:800;margin-left:8px;vertical-align:middle;
+}
+.own-you{background:rgba(255,77,141,0.15);color:var(--accent);}
+.own-f1{background:rgba(14,165,233,0.15);color:var(--accent3);}
+.own-f2{background:rgba(34,197,94,0.15);color:var(--green);}
+
+/* ── TEAM CARDS ── */
+.team-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin-top:1rem;}
+.team-card{
+  background:var(--surface2);border:1px solid var(--border);
+  border-radius:16px;padding:1.25rem;text-align:center;
+  transition:all 0.3s;position:relative;overflow:hidden;
+}
+.team-card::before{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(135deg,var(--tc-a),transparent);
+  opacity:0;transition:opacity 0.3s;
+}
+.team-card:hover::before{opacity:0.08;}
+.team-card:hover{transform:translateY(-4px);}
+.tc-you{--tc-a:var(--accent);}
+.tc-f1{--tc-a:var(--accent3);}
+.tc-f2{--tc-a:var(--green);}
+.tc-avatar{font-size:40px;margin-bottom:0.75rem;display:block;}
+.tc-role{font-family:'Fredoka One',cursive;font-size:18px;color:var(--text);}
+.tc-who{font-size:12px;font-weight:700;color:var(--muted);margin:4px 0 10px;}
+.tc-files{display:flex;flex-wrap:wrap;gap:4px;justify-content:center;}
+.tc-file{
+  font-size:10px;font-family:'JetBrains Mono',monospace;
+  padding:2px 8px;border-radius:4px;background:var(--surface);
+  border:1px solid var(--border);color:var(--muted);
+}
+
+/* ── FLAMES LEGEND ── */
+.flames-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:1rem;}
+.fl-card{
+  background:var(--surface2);border:1px solid var(--border);
+  border-radius:14px;padding:1rem;text-align:center;
+  transition:all 0.2s;cursor:default;
+}
+.fl-card:hover{transform:scale(1.05);}
+.fl-letter{font-family:'Fredoka One',cursive;font-size:36px;margin-bottom:4px;}
+.fl-label{font-size:12px;font-weight:800;color:var(--muted);}
+.fl-emoji{font-size:20px;margin-bottom:4px;display:block;}
+.fl-f{color:#60a5fa;}.fl-l{color:#f472b6;}.fl-a{color:#fbbf24;}
+.fl-m{color:#34d399;}.fl-e{color:#f87171;}.fl-s{color:#a78bfa;}
+
+/* ── SCROLL PROGRESS ── */
+#progress{
+  position:fixed;top:0;left:0;height:3px;z-index:999;
+  background:linear-gradient(90deg,var(--accent),var(--accent2),var(--accent3));
+  transition:width 0.1s;
+}
+
+/* ── NAV ── */
+.nav{
+  position:fixed;top:0;left:0;right:0;z-index:100;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:1rem 2rem;
+  background:rgba(13,13,20,0.8);backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--border);
+}
+.nav-logo{font-family:'Fredoka One',cursive;font-size:22px;
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.nav-links{display:flex;gap:1.5rem;}
+.nav-links a{font-size:13px;font-weight:700;color:var(--muted);text-decoration:none;transition:color 0.2s;}
+.nav-links a:hover{color:var(--text);}
+
+/* ── FOOTER ── */
+.footer{
+  text-align:center;padding:3rem 0;color:var(--muted);
+  font-size:13px;font-weight:700;border-top:1px solid var(--border);
+  margin-top:3rem;
+}
+.footer span{color:var(--accent);}
+
+@media(max-width:600px){
+  .nav-links{display:none;}
+  .hero-title{font-size:56px;}
+  .flames-grid{grid-template-columns:repeat(2,1fr);}
+  .team-grid{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+
+<div id="progress"></div>
+
+<!-- Starfield -->
+<div id="stars"></div>
+<div class="orb orb1"></div>
+<div class="orb orb2"></div>
+<div class="orb orb3"></div>
+
+<!-- Nav -->
+<nav class="nav">
+  <span class="nav-logo">🔥 FLAMES</span>
+  <div class="nav-links">
+    <a href="#groq">Groq Setup</a>
+    <a href="#structure">Structure</a>
+    <a href="#team">Team</a>
+    <a href="#run">Run It</a>
+  </div>
+</nav>
+
+<div class="wrap">
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-badge"><span></span> School Era Relationship Calculator</div>
+    <div class="hero-title">FLAMES</div>
+    <p class="hero-sub">A full-stack web app with animated UI, AI stories & themed backgrounds</p>
+    <div class="hero-badges">
+      <span class="badge badge-pink">FastAPI Backend</span>
+      <span class="badge badge-purple">Vanilla JS Frontend</span>
+      <span class="badge badge-blue">Groq AI Stories</span>
+      <span class="badge badge-green">Free to Run</span>
+      <span class="badge badge-amber">School Vibes Only 😄</span>
+    </div>
+  </div>
+
+  <!-- ══ GROQ GUIDE ══ -->
+  <div class="section" id="groq">
+    <div class="section-label">Step-by-step</div>
+    <div class="section-title">🔑 How to Get Your Groq API Key</div>
+
+    <div class="free-banner">
+      <div class="free-banner-icon">🎉</div>
+      <div class="free-banner-text">
+        <strong>Yes! Groq is completely FREE</strong>
+        <span>No credit card needed. No hidden charges. Free tier is more than enough for this project.</span>
+      </div>
+    </div>
+
+    <ol class="steps-list">
+      <li>
+        <div class="step-num">1</div>
+        <div class="step-content">
+          <div class="step-title">Go to Groq Console</div>
+          <div class="step-desc">Open your browser and go to the Groq developer console. This is where you manage your API keys.</div>
+          <a class="step-url" href="https://console.groq.com" target="_blank">↗ console.groq.com</a>
+        </div>
+      </li>
+      <li>
+        <div class="step-num">2</div>
+        <div class="step-content">
+          <div class="step-title">Sign Up (or Log In)</div>
+          <div class="step-desc">Click <strong>"Sign Up"</strong> — you can use your Google account or create one with email. Takes 30 seconds. No payment info asked.</div>
+        </div>
+      </li>
+      <li>
+        <div class="step-num">3</div>
+        <div class="step-content">
+          <div class="step-title">Go to API Keys Section</div>
+          <div class="step-desc">After logging in, look at the <strong>left sidebar</strong> → click <strong>"API Keys"</strong>. You'll see your keys dashboard.</div>
+        </div>
+      </li>
+      <li>
+        <div class="step-num">4</div>
+        <div class="step-content">
+          <div class="step-title">Create a New Key</div>
+          <div class="step-desc">Click the <strong>"Create API Key"</strong> button. Give it any name (e.g. <em>"flames-game"</em>). Click Create.</div>
+        </div>
+      </li>
+      <li>
+        <div class="step-num">5</div>
+        <div class="step-content">
+          <div class="step-title">Copy the Key Immediately!</div>
+          <div class="step-desc">⚠️ The key is shown <strong>only once</strong>. Copy it right away. It looks like: <code style="background:var(--code-bg);padding:2px 6px;border-radius:4px;font-family:monospace;color:#f1fa8c;">gsk_xxxxxxxxxxxxxxxxxxxxxxxxxxxx</code></div>
+        </div>
+      </li>
+      <li>
+        <div class="step-num">6</div>
+        <div class="step-content">
+          <div class="step-title">Add it to your .env file</div>
+          <div class="step-desc">In your <code style="background:var(--code-bg);padding:2px 6px;border-radius:4px;font-family:monospace;color:#f1fa8c;">flames_game/</code> folder, open (or create) the <code style="background:var(--code-bg);padding:2px 6px;border-radius:4px;font-family:monospace;">.env</code> file and paste:</div>
+          <div class="code-block" style="margin-top:10px;">
+            <div class="code-header">
+              <div class="code-dots"><span class="dot-r"></span><span class="dot-y"></span><span class="dot-g"></span></div>
+              <span class="code-lang">.env</span>
+            </div>
+            <div class="code-body"><pre><span class="cm"># Paste your key here</span>
+<span class="var">GROQ_API_KEY</span>=<span class="str">gsk_your_actual_key_here</span></pre></div>
+          </div>
+        </div>
+      </li>
+      <li>
+        <div class="step-num">7</div>
+        <div class="step-content">
+          <div class="step-title">Enable AI Story in the App</div>
+          <div class="step-desc">Open the FLAMES game in your browser → toggle <strong>"Enable AI Story ✨"</strong> → calculate — you'll now get AI-generated stories!</div>
+        </div>
+      </li>
+    </ol>
+
+    <div class="card" style="margin-top:1.5rem;">
+      <div style="font-family:'Fredoka One',cursive;font-size:18px;color:var(--amber);margin-bottom:1rem;">📊 Free Tier Limits (as of 2025)</div>
+      <table class="limits-table">
+        <tr><th>Model</th><th>Requests / Min</th><th>Tokens / Min</th><th>Requests / Day</th><th>Cost</th></tr>
+        <tr><td>LLaMA 3 8B</td><td>30</td><td>30,000</td><td>14,400</td><td><span class="chip chip-green">FREE</span></td></tr>
+        <tr><td>LLaMA 3 70B</td><td>30</td><td>6,000</td><td>14,400</td><td><span class="chip chip-green">FREE</span></td></tr>
+        <tr><td>Mixtral 8x7B</td><td>30</td><td>5,000</td><td>14,400</td><td><span class="chip chip-green">FREE</span></td></tr>
+      </table>
+      <p style="font-size:12px;color:var(--muted);margin-top:10px;font-weight:700;">💡 14,400 requests/day = you can calculate FLAMES ~14,000 times per day for free. More than enough!</p>
+    </div>
+  </div>
+
+  <!-- ══ WHAT IS FLAMES ══ -->
+  <div class="section">
+    <div class="section-label">The Game</div>
+    <div class="section-title">🔥 What Does FLAMES Mean?</div>
+    <div class="flames-grid">
+      <div class="fl-card"><span class="fl-emoji">🤝</span><div class="fl-letter fl-f">F</div><div class="fl-label">Friends</div></div>
+      <div class="fl-card"><span class="fl-emoji">❤️</span><div class="fl-letter fl-l">L</div><div class="fl-label">Loves</div></div>
+      <div class="fl-card"><span class="fl-emoji">🥰</span><div class="fl-letter fl-a">A</div><div class="fl-label">Affection</div></div>
+      <div class="fl-card"><span class="fl-emoji">💍</span><div class="fl-letter fl-m">M</div><div class="fl-label">Marriage</div></div>
+      <div class="fl-card"><span class="fl-emoji">😈</span><div class="fl-letter fl-e">E</div><div class="fl-label">Enemies</div></div>
+      <div class="fl-card"><span class="fl-emoji">🤗</span><div class="fl-letter fl-s">S</div><div class="fl-label">Siblings</div></div>
+    </div>
+  </div>
+
+  <!-- ══ DIRECTORY STRUCTURE ══ -->
+  <div class="section" id="structure">
+    <div class="section-label">Project Layout</div>
+    <div class="section-title">📁 Directory Structure</div>
+    <div class="tree">
+<span class="tree-folder">flames_game/</span>
+│
+├── <span class="tree-folder">backend/</span><span class="tree-comment">                    ← Friend 1</span>
+│   ├── <span class="tree-file">flames_engine.py</span><span class="tree-owner own-f1">Friend 1</span><span class="tree-comment">    Core FLAMES algorithm</span>
+│   ├── <span class="tree-file">app.py</span><span class="tree-owner own-f1">Friend 1</span><span class="tree-comment">            FastAPI server + routes</span>
+│   ├── <span class="tree-file">requirements.txt</span><span class="tree-comment">         Python dependencies</span>
+│   └── <span class="tree-file">__init__.py</span>
+│
+├── <span class="tree-folder">frontend/</span><span class="tree-comment">                   ← You</span>
+│   ├── <span class="tree-file">index.html</span><span class="tree-owner own-you">You</span><span class="tree-comment">           Page structure + layout</span>
+│   ├── <span class="tree-file">style.css</span><span class="tree-owner own-you">You</span><span class="tree-comment">            All styles, themes, animations</span>
+│   └── <span class="tree-file">app.js</span><span class="tree-owner own-you">You</span><span class="tree-comment">               API calls + DOM rendering</span>
+│
+├── <span class="tree-folder">model/</span><span class="tree-comment">                      ← Friend 2</span>
+│   ├── <span class="tree-file">story_generator.py</span><span class="tree-owner own-f2">Friend 2</span><span class="tree-comment">  Groq LLaMA 3 story gen</span>
+│   └── <span class="tree-file">__init__.py</span>
+│
+├── <span class="tree-folder">tests/</span>
+│   └── <span class="tree-file">test_flames_engine.py</span><span class="tree-comment">    Unit tests</span>
+│
+├── <span class="tree-file">.env</span><span class="tree-comment">                        ← Your Groq key goes here</span>
+├── <span class="tree-file">.env.example</span>
+├── <span class="tree-file">.gitignore</span>
+└── <span class="tree-file">README.md</span>
+    </div>
+  </div>
+
+  <!-- ══ TEAM ══ -->
+  <div class="section" id="team">
+    <div class="section-label">Collaboration</div>
+    <div class="section-title">👥 Team Responsibilities</div>
+    <div class="team-grid">
+      <div class="team-card tc-you">
+        <span class="tc-avatar">💻</span>
+        <div class="tc-role">You</div>
+        <div class="tc-who">UI Developer</div>
+        <div class="tc-files">
+          <span class="tc-file">index.html</span>
+          <span class="tc-file">style.css</span>
+          <span class="tc-file">app.js</span>
+        </div>
+      </div>
+      <div class="team-card tc-f1">
+        <span class="tc-avatar">⚙️</span>
+        <div class="tc-role">Friend 1</div>
+        <div class="tc-who">Backend Developer</div>
+        <div class="tc-files">
+          <span class="tc-file">app.py</span>
+          <span class="tc-file">flames_engine.py</span>
+        </div>
+      </div>
+      <div class="team-card tc-f2">
+        <span class="tc-avatar">🤖</span>
+        <div class="tc-role">Friend 2</div>
+        <div class="tc-who">Model / AI</div>
+        <div class="tc-files">
+          <span class="tc-file">story_generator.py</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ HOW TO RUN ══ -->
+  <div class="section" id="run">
+    <div class="section-label">Getting Started</div>
+    <div class="section-title">🚀 How to Run the Project</div>
+
+    <div class="card">
+      <div style="font-weight:800;color:var(--accent);margin-bottom:12px;">Step 1 — Install dependencies (Friend 1)</div>
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-dots"><span class="dot-r"></span><span class="dot-y"></span><span class="dot-g"></span></div>
+          <span class="code-lang">bash</span>
+        </div>
+        <div class="code-body"><pre><span class="cm"># In the backend folder</span>
+<span class="kw">cd</span> flames_game/backend
+<span class="fn">pip</span> install <span class="str">-r requirements.txt</span></pre></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div style="font-weight:800;color:var(--accent3);margin-bottom:12px;">Step 2 — Add your Groq key (Friend 2)</div>
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-dots"><span class="dot-r"></span><span class="dot-y"></span><span class="dot-g"></span></div>
+          <span class="code-lang">.env</span>
+        </div>
+        <div class="code-body"><pre><span class="var">GROQ_API_KEY</span>=<span class="str">gsk_your_key_here</span></pre></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div style="font-weight:800;color:var(--green);margin-bottom:12px;">Step 3 — Start the backend (Terminal 1)</div>
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-dots"><span class="dot-r"></span><span class="dot-y"></span><span class="dot-g"></span></div>
+          <span class="code-lang">bash</span>
+        </div>
+        <div class="code-body"><pre><span class="kw">cd</span> flames_game/backend
+<span class="fn">uvicorn</span> app:app --reload
+<span class="cm"># → Running on http://localhost:8000</span></pre></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div style="font-weight:800;color:var(--amber);margin-bottom:12px;">Step 4 — Open the frontend (You)</div>
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-dots"><span class="dot-r"></span><span class="dot-y"></span><span class="dot-g"></span></div>
+          <span class="code-lang">bash</span>
+        </div>
+        <div class="code-body"><pre><span class="cm"># Open frontend/index.html in VS Code</span>
+<span class="cm"># Right click → Open with Live Server</span>
+<span class="cm"># → Runs on http://127.0.0.1:5500</span></pre></div>
+      </div>
+      <p style="font-size:13px;color:var(--muted);margin-top:12px;font-weight:700;">⚠️ Keep BOTH terminals running at the same time — backend on 8000, frontend on 5500</p>
+    </div>
+  </div>
+
+  <!-- ══ TECH STACK ══ -->
+  <div class="section">
+    <div class="section-label">Technologies</div>
+    <div class="section-title">🛠 Tech Stack</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px;margin-top:1rem;">
+      <div class="card" style="text-align:center;padding:1.25rem;">
+        <div style="font-size:32px;margin-bottom:8px;">🌐</div>
+        <div style="font-weight:800;color:var(--text);">Frontend</div>
+        <div style="font-size:12px;color:var(--muted);margin-top:4px;font-weight:700;">HTML5 · CSS3 · Vanilla JS</div>
+      </div>
+      <div class="card" style="text-align:center;padding:1.25rem;">
+        <div style="font-size:32px;margin-bottom:8px;">⚡</div>
+        <div style="font-weight:800;color:var(--text);">Backend</div>
+        <div style="font-size:12px;color:var(--muted);margin-top:4px;font-weight:700;">Python · FastAPI · Uvicorn</div>
+      </div>
+      <div class="card" style="text-align:center;padding:1.25rem;">
+        <div style="font-size:32px;margin-bottom:8px;">🤖</div>
+        <div style="font-weight:800;color:var(--text);">AI Model</div>
+        <div style="font-size:12px;color:var(--muted);margin-top:4px;font-weight:700;">Groq API · LLaMA 3 8B</div>
+      </div>
+      <div class="card" style="text-align:center;padding:1.25rem;">
+        <div style="font-size:32px;margin-bottom:8px;">🧪</div>
+        <div style="font-weight:800;color:var(--text);">Testing</div>
+        <div style="font-size:12px;color:var(--muted);margin-top:4px;font-weight:700;">pytest · Unit Tests</div>
+      </div>
+    </div>
+  </div>
+
+  <footer class="footer">
+    Built with <span>❤️</span> for school-era nostalgia &nbsp;·&nbsp; FLAMES Game v2.0 &nbsp;·&nbsp; <span>Free & Open Source</span>
+  </footer>
+
+</div>
+
+<script>
+// Starfield
+const starsEl = document.getElementById('stars');
+for(let i=0;i<120;i++){
+  const s=document.createElement('div');
+  s.className='star';
+  const sz=Math.random()*2.5+0.5;
+  s.style.cssText=`
+    width:${sz}px;height:${sz}px;
+    left:${Math.random()*100}%;top:${Math.random()*100}%;
+    animation-duration:${2+Math.random()*4}s;
+    animation-delay:${-Math.random()*6}s;
+  `;
+  starsEl.appendChild(s);
+}
+
+// Scroll progress
+window.addEventListener('scroll',()=>{
+  const h=document.documentElement;
+  const pct=(h.scrollTop/(h.scrollHeight-h.clientHeight))*100;
+  document.getElementById('progress').style.width=pct+'%';
+});
+
+// Scroll reveal
+const observer=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('visible');});
+},{threshold:0.1});
+document.querySelectorAll('.section').forEach(s=>observer.observe(s));
+</script>
+</body>
+</html>

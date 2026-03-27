@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FLAMES 🔥</title>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+<div id="floaties"></div>
+<div id="particles"></div>
+<div class="page">
+  <header class="header">
+    <div class="logo">FLAMES</div>
+    <p class="tagline">✨ The ultimate school-era relationship test ✨</p>
+  </header>
+  <div class="card" id="input-card">
+    <div class="duo-inputs">
+      <div class="input-box">
+        <span class="input-label">💫 Your Name</span>
+        <input class="name-input" id="name1" placeholder="Akash..." autocomplete="off"/>
+      </div>
+      <div class="vs-circle">VS</div>
+      <div class="input-box">
+        <span class="input-label">💖 Crush's Name</span>
+        <input class="name-input" id="name2" placeholder="Priya..." autocomplete="off"/>
+      </div>
+    </div>
+    <label class="toggle-row">
+      <input type="checkbox" id="gen-story"/>
+      <span class="tog"></span>
+      Enable AI Story ✨ (needs Groq key)
+    </label>
+    <p class="error-msg" id="err"></p>
+    <button class="btn-calc" id="calc-btn" onclick="startFlames()">🔥 Calculate FLAMES 🔥</button>
+  </div>
+  <div class="legend" id="legend">
+    <div class="leg-item" data-l="F"><span class="leg-l">F</span><span class="leg-w">Friends</span></div>
+    <div class="leg-item" data-l="L"><span class="leg-l">L</span><span class="leg-w">Loves</span></div>
+    <div class="leg-item" data-l="A"><span class="leg-l">A</span><span class="leg-w">Affection</span></div>
+    <div class="leg-item" data-l="M"><span class="leg-l">M</span><span class="leg-w">Marriage</span></div>
+    <div class="leg-item" data-l="E"><span class="leg-l">E</span><span class="leg-w">Enemies</span></div>
+    <div class="leg-item" data-l="S"><span class="leg-l">S</span><span class="leg-w">Siblings</span></div>
+  </div>
+  <div id="anim-stage">
+    <div class="stage-bg"></div>
+    <div class="stage-inner">
+      <div class="anim-title" id="anim-title">✏️ Let's do the FLAMES calculation...</div>
+      <div class="name-tag" id="tag-n1"></div>
+      <div class="name-letters-row" id="row-n1"></div>
+      <div class="stage-divider" id="div1"></div>
+      <div class="name-tag" id="tag-n2"></div>
+      <div class="name-letters-row" id="row-n2"></div>
+      <div class="stage-divider" id="div2" style="display:none">⬇️ Remaining Letters ⬇️</div>
+      <div class="remaining-row" id="rem-row" style="display:none"></div>
+      <div class="count-display" id="count-display" style="display:none"></div>
+      <div class="flames-elim-row" id="flames-tiles" style="display:none"></div>
+      <div class="elim-step-msg" id="elim-msg"></div>
+    </div>
+  </div>
+  <div id="result-card">
+    <div class="outcome-banner" id="ob"></div>
+    <div class="story-card" id="story-card" style="display:none">
+      <div class="story-hdr">✨ AI Story</div>
+      <p class="story-body" id="story-body"></p>
+    </div>
+    <div class="bgm-card" id="bgm-card">
+      <div class="bgm-title" id="bgm-title">🎵 Vibe Music</div>
+      <div class="bgm-hint" id="bgm-hint"></div>
+    </div>
+    <button class="btn-reset" onclick="resetAll()">↺ Try Again!</button>
+  </div>
+</div>
+
+<!-- Disclaimer Modal -->
+<div id="disclaimer-overlay">
+  <div class="disclaimer-box">
+    <span class="disclaimer-emoji" id="disc-emoji">⚠️</span>
+    <div class="disclaimer-title" id="disc-title">Hold up!</div>
+    <p class="disclaimer-text" id="disc-text"></p>
+    <div class="disclaimer-rules" id="disc-rules"></div>
+    <button class="btn-proceed" onclick="proceedCalculation()">Okay okay, show me! 🔥</button>
+  </div>
+</div>
+
+<!-- Loading -->
+<div id="loading">
+  <span class="loader-emoji">🔥</span>
+  <span class="loader-text">Reading the flames...</span>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>

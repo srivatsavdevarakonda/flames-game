@@ -17,6 +17,10 @@ from fastapi.responses import FileResponse
 from pydantic import BaseModel, validator
 from flames_engine import calculate_flames, FLAMES_LABELS, FLAMES_EMOJIS
 import os
+import sys
+
+# Add parent directory to sys.path to allow importing from 'model' directory
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 app = FastAPI(
     title="FLAMES Game API",
@@ -98,19 +102,17 @@ async def calculate(request: FlamesRequest):
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Calculation error: {str(e)}")
 
-    story = None
-    if request.generate_story:
-        try:
-            # Import here to avoid circular imports; model service is optional
-            from model.story_generator import generate_story
-            story = await generate_story(
-                name1=result.name1,
-                name2=result.name2,
-                outcome=result.label,
-                emoji=result.emoji,
-            )
-        except Exception as e:
-            story = f"(Story unavailable: {str(e)})"
+    FALLBACK_STORIES = {
+        "Friends":   "{name1} and {name2} make an amazing duo — always there for each other through thick and thin. Their friendship is the kind that lasts a lifetime. 🤝",
+        "Loves":     "There's something special between {name1} and {name2}. Every glance, every smile — it all adds up to something neither of them can ignore. ❤️",
+        "Affection": "{name1} and {name2} share a quiet, warm bond. It's not loud or dramatic — it's the kind of connection that feels safe and real. 🥰",
+        "Marriage":  "The stars have spoken! {name1} and {name2} are written in the same chapter of life's big story. 💐",
+        "Enemies":   "{name1} and {name2} can't seem to agree on anything — but hey, even rivals push each other to be better. 😬",
+        "Siblings":  "{name1} and {name2} feel like family. They tease, support, and look out for each other like only siblings can. 😊",
+    }
+
+    template = FALLBACK_STORIES.get(result.label, "{name1} and {name2} share a special bond.")
+    story = template.format(name1=result.name1, name2=result.name2)
 
     return FlamesResponse(
         name1=result.name1,

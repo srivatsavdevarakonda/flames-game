@@ -18,44 +18,7 @@ const THEMES = {
       quote:'"You bother each other, protect each other, judge each other\'s choices — pure Raksha Bandhan energy 💜"' },
 };
 
-const DISCLAIMERS = {
-  F:{ emoji:'🤝', title:'Friendship Alert! 😄',
-    text:'So FLAMES says you two are friends. Cool! But FLAMES is literally just letter math from class 5.',
-    rules:['🚫 Do NOT stop talking to them because it said "Friends" and not "Loves"',
-           '✅ Friends are actually better — they won\'t vanish after a fight over ice cream',
-           '😂 Also... you\'re clearly testing this because you DON\'T just see them as a friend. Be honest!',
-           '📝 FLAMES was invented by bored students. Treat it accordingly.'] },
-  L:{ emoji:'💘', title:'L-O-V-E?! Calm down!!',
-    text:'Before you go confessing feelings because a letter-counting game told you to — breathe.',
-    rules:['🚫 "FLAMES said we\'re meant to be" is NOT a pickup line. Ever.',
-           '😬 Do NOT send a love letter citing this as scientific evidence',
-           '✅ If you actually like them, courage beats algorithm every time',
-           '🎲 This is letter counting. Not astrology. Not destiny. Just math.'] },
-  A:{ emoji:'🥰', title:'Affection Loading... 🌸',
-    text:'Something warm is brewing between you two! Or FLAMES is just guessing. Probably the second one.',
-    rules:['✅ Affection is beautiful — cherish it without labelling it immediately',
-           '🚫 Do NOT overthink this for the next 72 hours straight',
-           '😅 Telling your friends "we have AFFECTION" will get you roasted at lunch',
-           '💡 Some things are better felt than calculated!'] },
-  M:{ emoji:'💒', title:'Getting MARRIED?! 🎊',
-    text:'Whoa whoa whoa. Put the wedding Pinterest board away.',
-    rules:['🚫 Do NOT tell your parents the algorithm approved this marriage',
-           '😂 You\'re probably in school. Please focus on your exams first',
-           '✅ Love is earned through effort, not calculated through letter counting',
-           '🎉 If it actually happens someday — invite FLAMES to the wedding!'] },
-  E:{ emoji:'😈', title:'ENEMIES. Yikes. 😤',
-    text:'Okay this escalated quickly. Stay calm. Step away from the drama.',
-    rules:['🚫 Do NOT screenshot this and send it to them with evil emojis',
-           '🚫 ABSOLUTELY NO ink in their water bottle. I mean it.',
-           '😤 Rivals often become best friends — or the best revenge stories',
-           '✅ Channel this energy into beating them at exams. That\'s the move.'] },
-  S:{ emoji:'🎀', title:'Sibling Vibes! 💜',
-    text:'You two have that iconic Raksha Bandhan energy going on!',
-    rules:['😆 This means they\'ll eat the last slice of pizza AND blame it on you',
-           '✅ Sibling bonds are actually the strongest — ride or die, no questions asked',
-           '🚫 Do NOT say "ew siblings" — embrace the chaos and the loyalty',
-           '💜 You\'re basically family now. Congratulations? Maybe?'] },
-};
+
 
 const BGM = {
   F:{ title:'🎵 Friend Anthem Time!',
@@ -157,37 +120,21 @@ function startFlames(){
   if(!n1.match(/[a-zA-Z]/)||!n2.match(/[a-zA-Z]/)){err.textContent='Names must have at least one letter!';return;}
   err.textContent='';
   document.getElementById('loading').classList.add('show');
-  const genStory=document.getElementById('gen-story').checked;
   fetch(`${API_BASE}/api/flames`,{
     method:'POST',
     headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({name1:n1,name2:n2,generate_story:genStory})
+    body:JSON.stringify({name1:n1,name2:n2})
   })
   .then(r=>r.json())
   .then(data=>{
     document.getElementById('loading').classList.remove('show');
     pendingData=data;
-    showDisclaimer(data.winner);
+    runAnimation(pendingData);
   })
   .catch(e=>{
     document.getElementById('loading').classList.remove('show');
     err.textContent='Error: '+e.message;
   });
-}
-
-function showDisclaimer(winner){
-  const d=DISCLAIMERS[winner];
-  document.getElementById('disc-emoji').textContent=d.emoji;
-  document.getElementById('disc-title').textContent=d.title;
-  document.getElementById('disc-text').textContent=d.text;
-  document.getElementById('disc-rules').innerHTML=d.rules.map(r=>`<p>${r}</p>`).join('');
-  document.getElementById('disclaimer-overlay').classList.add('show');
-}
-
-function proceedCalculation(){
-  document.getElementById('disclaimer-overlay').classList.remove('show');
-  applyTheme(pendingData.winner);
-  runAnimation(pendingData);
 }
 
 // ─── ANIMATION ────────────────────────────────────────────────────────────────
@@ -205,45 +152,60 @@ async function runAnimation(data){
   document.getElementById('tag-n1').textContent='';
   document.getElementById('tag-n2').textContent='';
 
-  await delay(300);
+  await delay(600);
 
   const letters1=data.name1.replace(/\s/g,'').toUpperCase().split('');
   const letters2=data.name2.replace(/\s/g,'').toUpperCase().split('');
 
   document.getElementById('anim-title').textContent='✏️ Spreading out the letters...';
   document.getElementById('tag-n1').textContent=`— ${data.name1.toUpperCase()} —`;
-  await renderLetters('row-n1',letters1,80);
-  await delay(400);
+  await renderLetters('row-n1',letters1,160);
+  await delay(800);
 
   document.getElementById('tag-n2').textContent=`— ${data.name2.toUpperCase()} —`;
-  await renderLetters('row-n2',letters2,80);
-  await delay(600);
+  await renderLetters('row-n2',letters2,160);
+  await delay(1200);
 
   document.getElementById('anim-title').textContent='🔍 Finding common letters...';
   await highlightCommon(letters1,letters2);
-  await delay(700);
+  await delay(1400);
 
   document.getElementById('anim-title').textContent='✂️ Crossing out the common ones...';
   await strikeCommon(letters1,letters2);
-  await delay(600);
+  await delay(1200);
 
   document.getElementById('div2').style.display='block';
   document.getElementById('rem-row').style.display='flex';
   const remLetters=(data.remaining_name1+data.remaining_name2).split('');
-  await renderRemainingLetters('rem-row',remLetters,100);
-  await delay(400);
+  await renderRemainingLetters('rem-row',remLetters,200);
+  await delay(800);
 
   document.getElementById('count-display').style.display='block';
   document.getElementById('count-display').innerHTML=`Total count: <span>${data.total_count||1}</span>`;
-  await delay(600);
+  await delay(1000);
+
+  const EXCITEMENT_MSGS = [
+    "Ooo, the tension is building! 🫣",
+    "Are you getting excited? 👀",
+    "Drumroll please... 🥁",
+    "This is getting intense! 😬",
+    "I wonder what it's gonna be... 🤔",
+    "Fingers crossed! 🤞",
+    "The flames are revealing the truth... 🔥",
+    "Hope you're ready for this! 😆",
+    "Math doesn't lie... usually. 🤓",
+    "Almost there, hold your breath! 🫢"
+  ];
+  document.getElementById('anim-title').textContent = EXCITEMENT_MSGS[Math.floor(Math.random() * EXCITEMENT_MSGS.length)];
+  await delay(2000);
 
   document.getElementById('anim-title').textContent='🔥 FLAMES elimination begins!';
   document.getElementById('flames-tiles').style.display='flex';
   await buildFlamesTiles();
-  await delay(500);
+  await delay(1000);
 
   await animateElimination(data.elimination_order,data.winner,data.total_count||1);
-  await delay(800);
+  await delay(1600);
   showResult(data);
 }
 
@@ -254,7 +216,7 @@ async function renderLetters(rowId,letters,gap){
   for(let i=0;i<letters.length;i++){
     const el=document.createElement('div');
     el.className='nl'; el.id=`${rowId}-${i}`; el.textContent=letters[i];
-    el.style.animationDelay=(i*0.06)+'s';
+    el.style.animationDelay=(i*0.12)+'s';
     row.appendChild(el);
     await delay(gap);
   }
@@ -270,7 +232,7 @@ async function highlightCommon(letters1,letters2){
         if(e1)e1.classList.add('common');
         if(e2)e2.classList.add('common');
         used2[j]=true;
-        await delay(350);
+        await delay(700);
         break;
       }
     }
@@ -287,7 +249,7 @@ async function strikeCommon(letters1,letters2){
         if(e1){e1.classList.remove('common');e1.classList.add('struck');}
         if(e2){e2.classList.remove('common');e2.classList.add('struck');}
         used2[j]=true;
-        await delay(250);
+        await delay(500);
         break;
       }
     }
@@ -299,7 +261,7 @@ async function renderRemainingLetters(rowId,letters,gap){
   for(let i=0;i<letters.length;i++){
     const el=document.createElement('div');
     el.className='rem-letter'; el.textContent=letters[i];
-    el.style.animationDelay=(i*0.07)+'s';
+    el.style.animationDelay=(i*0.14)+'s';
     row.appendChild(el);
     await delay(gap);
   }
@@ -321,16 +283,16 @@ async function animateElimination(elimOrder,winner,count){
   let step=1;
   for(const elim of elimOrder){
     msgEl.style.opacity='0';
-    await delay(100);
+    await delay(200);
     const tile=document.getElementById(`ft-${elim}`);
     if(tile)tile.classList.add('elim');
     remaining=remaining.filter(l=>l!==elim);
     msgEl.textContent=`Step ${step}: Count ${count} → eliminate "${elim}" (${remaining.join('')} remain)`;
     msgEl.style.opacity='1';
     step++;
-    await delay(650);
+    await delay(1300);
   }
-  await delay(300);
+  await delay(600);
   const winTile=document.getElementById(`ft-${winner}`);
   if(winTile)winTile.classList.add('winner-tile');
   msgEl.textContent=`🎉 "${winner}" wins — ${THEMES[winner].label}!`;
@@ -339,6 +301,7 @@ async function animateElimination(elimOrder,winner,count){
 
 // ─── SHOW RESULT ──────────────────────────────────────────────────────────────
 function showResult(data){
+  applyTheme(data.winner);
   const t=THEMES[data.winner];
   const rc=document.getElementById('result-card');
   rc.style.display='block'; rc.classList.add('show');

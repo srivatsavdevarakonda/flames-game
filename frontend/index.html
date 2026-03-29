@@ -27,11 +27,7 @@
         <input class="name-input" id="name2" placeholder="Priya..." autocomplete="off"/>
       </div>
     </div>
-    <label class="toggle-row">
-      <input type="checkbox" id="gen-story"/>
-      <span class="tog"></span>
-      Enable AI Story ✨ (needs Groq key)
-    </label>
+
     <p class="error-msg" id="err"></p>
     <button class="btn-calc" id="calc-btn" onclick="startFlames()">🔥 Calculate FLAMES 🔥</button>
   </div>
@@ -62,7 +58,6 @@
   <div id="result-card">
     <div class="outcome-banner" id="ob"></div>
     <div class="story-card" id="story-card" style="display:none">
-      <div class="story-hdr">✨ AI Story</div>
       <p class="story-body" id="story-body"></p>
     </div>
     <div class="bgm-card" id="bgm-card">
@@ -73,16 +68,6 @@
   </div>
 </div>
 
-<!-- Disclaimer Modal -->
-<div id="disclaimer-overlay">
-  <div class="disclaimer-box">
-    <span class="disclaimer-emoji" id="disc-emoji">⚠️</span>
-    <div class="disclaimer-title" id="disc-title">Hold up!</div>
-    <p class="disclaimer-text" id="disc-text"></p>
-    <div class="disclaimer-rules" id="disc-rules"></div>
-    <button class="btn-proceed" onclick="proceedCalculation()">Okay okay, show me! 🔥</button>
-  </div>
-</div>
 
 <!-- Loading -->
 <div id="loading">

@@ -180,9 +180,9 @@ body {
 .ob-enemies  {background:linear-gradient(135deg,#450a0a,#7f1d1d);color:#fca5a5;}
 .ob-siblings {background:linear-gradient(135deg,#f3e8ff,#e9d5ff);color:#581c87;}
 
-.story-card{background:linear-gradient(135deg,#fdf2f8,#f5f3ff);border:2px solid #fbcfe8;border-radius:18px;padding:1.25rem;margin-bottom:1rem;}
-.story-hdr{font-size:11px;font-weight:900;letter-spacing:0.1em;text-transform:uppercase;color:#be185d;margin-bottom:8px;}
-.story-body{font-size:15px;line-height:1.7;color:#4a1b2c;font-weight:600;}
+.story-card{background:var(--bg1);border:2px solid var(--accent);border-radius:18px;padding:1.25rem;margin-bottom:1rem;}
+.story-hdr{font-size:11px;font-weight:900;letter-spacing:0.1em;text-transform:uppercase;color:var(--accent);margin-bottom:8px;}
+.story-body{font-size:15px;line-height:1.7;color:var(--text);font-weight:600;text-align:center;}
 .bgm-card{background:var(--bg1);border-radius:18px;padding:1.25rem;border:2px dashed var(--accent);margin-bottom:1rem;text-align:center;}
 .bgm-title{font-family:'Fredoka One',cursive;font-size:18px;color:var(--accent);margin-bottom:6px;}
 .bgm-hint{font-size:13px;font-weight:700;color:var(--muted);line-height:1.8;}

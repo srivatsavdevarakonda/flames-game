@@ -24,7 +24,7 @@ load_dotenv()
 # ─── Config ──────────────────────────────────────────────────────────────────
 
 GROQ_API_KEY = os.getenv("GROQ_API_KEY", "")
-MODEL_NAME = "llama3-8b-8192"   # Fast, free-tier friendly
+MODEL_NAME = "llama-3.1-8b-instant"   # Fast, free-tier friendly
 
 OUTCOME_CONTEXT = {
     "Friends":   "they are great friends who enjoy each other's company",

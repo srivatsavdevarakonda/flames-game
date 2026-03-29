@@ -10,17 +10,26 @@ Endpoints:
   GET  /health              → Health check
 """
 
+import os
+import sys
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
 from pydantic import BaseModel, validator
 from flames_engine import calculate_flames, FLAMES_LABELS, FLAMES_EMOJIS
-import os
-import sys
+from supabase import create_client
+from dotenv import load_dotenv
 
 # Add parent directory to sys.path to allow importing from 'model' directory
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+load_dotenv(os.path.join(os.path.dirname(__file__), '..', '.env'))
+
+# IMPORTANT: When deploying to Vercel, navigate to Settings -> Environment Variables and add these values!
+supabase = create_client(
+    os.getenv("SUPABASE_URL"),
+    os.getenv("SUPABASE_KEY")
+)
 
 app = FastAPI(
     title="FLAMES Game API",
@@ -101,6 +110,15 @@ async def calculate(request: FlamesRequest):
         result = calculate_flames(request.name1, request.name2)
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Calculation error: {str(e)}")
+
+    try:
+        supabase.table("flames_logs").insert({
+            "name1": request.name1,
+            "name2": request.name2,
+            "result": result.label
+        }).execute()
+    except Exception as e:
+        print("DB insert failed:", e)
 
     FALLBACK_STORIES = {
         "Friends":   "{name1} and {name2} make an amazing duo — always there for each other through thick and thin. Their friendship is the kind that lasts a lifetime. 🤝",

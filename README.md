@@ -20,11 +20,11 @@ A full-stack web app that calculates your FLAMES relationship with anyone — wi
 
 ## 👥 Team Responsibilities
 
-| Role | Person | Files |
-|------|--------|-------|
-| 🎨 **UI / Frontend** | You | `frontend/index.html`, `frontend/style.css`, `frontend/app.js` |
-| ⚙️ **Backend / API** | Friend 1 | `backend/app.py`, `backend/flames_engine.py` |
-| 🤖 **AI / Model** | Friend 2 | `model/story_generator.py` |
+| Role | Files |
+|------|-------|
+| 🎨 **UI / Frontend** |`frontend/index.html`, `frontend/style.css`, `frontend/app.js` |
+| ⚙️ **Backend / API** |`backend/app.py`, `backend/flames_engine.py` |
+| 🤖 **AI / Model** |`model/story_generator.py` |
 
 ---
 
